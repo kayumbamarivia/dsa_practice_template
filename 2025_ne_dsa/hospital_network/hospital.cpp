@@ -42,6 +42,10 @@ string Hospital::getConnectionDescription(const string& hospitalId) const {
     return (it != connections.end()) ? it->second : "";
 }
 
+void Hospital::clearConnections() {
+    connections.clear();
+}
+
 // Data validation
 bool Hospital::isValidId(const string& id) {
     if (id.length() < 2) return false;

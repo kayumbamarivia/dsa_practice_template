@@ -3,6 +3,9 @@
 #include <sstream>
 #include <iomanip>
 #include <algorithm>
+#include <queue>
+#include <set>
+#include <functional>
 
 using namespace std;
 
@@ -83,21 +86,20 @@ Hospital* HospitalNetwork::getHospital(const string& id) {
 
 // Connection Management
 bool HospitalNetwork::addConnection(const string& id1, const string& id2, 
-                                  const string& description) {
+                                  const string& description, double distance) {
     if (!hospitalExists(id1) || !hospitalExists(id2)) {
-        cout << "Error: One or both hospital IDs not found.\n";
+        cout << "Error: One or both hospitals do not exist.\n";
         return false;
     }
     
-    if (connectionExists(id1, id2)) {
-        cout << "Error: Connection already exists.\n";
-        return false;
-    }
-    
-    // Add bidirectional connection
+    // Add connection to both hospitals
     hospitals[id1].addConnection(id2, description);
     hospitals[id2].addConnection(id1, description);
-    cout << "Connection added successfully!\n";
+    
+    // Store distance
+    distances[make_pair(id1, id2)] = distance;
+    distances[make_pair(id2, id1)] = distance;
+    
     return true;
 }
 
@@ -178,13 +180,13 @@ void HospitalNetwork::setupPredefinedScenario() {
     }
     
     // Add connections
-    addConnection("H1", "H6", "Emergency backup");
-    addConnection("H1", "H4", "Referral support");
-    addConnection("H2", "H3", "Standard route");
-    addConnection("H6", "H5", "Emergency support");
-    addConnection("H5", "H4", "Ambulance path");
-    addConnection("H4", "H1", "Referral support");
-    addConnection("H2", "H3", "Standard route");
+    addConnection("H1", "H6", "Emergency backup", 100);
+    addConnection("H1", "H4", "Referral support", 50);
+    addConnection("H2", "H3", "Standard route", 75);
+    addConnection("H6", "H5", "Emergency support", 100);
+    addConnection("H5", "H4", "Ambulance path", 50);
+    addConnection("H4", "H1", "Referral support", 50);
+    addConnection("H2", "H3", "Standard route", 75);
 }
 
 // File Operations
@@ -303,4 +305,193 @@ bool HospitalNetwork::loadData() {
 
 bool HospitalNetwork::saveData() {
     return saveHospitals() && saveConnections();
+}
+
+vector<string> HospitalNetwork::findShortestPath(const string& start, const string& end) {
+    if (!hospitalExists(start) || !hospitalExists(end)) {
+        return vector<string>();
+    }
+    
+    map<string, double> dist;
+    map<string, string> prev;
+    priority_queue<pair<double, string>, vector<pair<double, string>>, 
+                  greater<pair<double, string>>> pq;
+    
+    // Initialize distances
+    for (const auto& hospital : hospitals) {
+        dist[hospital.first] = numeric_limits<double>::infinity();
+    }
+    dist[start] = 0;
+    pq.push({0, start});
+    
+    while (!pq.empty()) {
+        string current = pq.top().second;
+        pq.pop();
+        
+        if (current == end) break;
+        
+        for (const auto& connection : hospitals[current].getConnections()) {
+            string neighbor = connection.first;
+            double weight = distances[make_pair(current, neighbor)];
+            
+            if (dist[current] + weight < dist[neighbor]) {
+                dist[neighbor] = dist[current] + weight;
+                prev[neighbor] = current;
+                pq.push({dist[neighbor], neighbor});
+            }
+        }
+    }
+    
+    // Reconstruct path
+    vector<string> path;
+    for (string at = end; at != ""; at = prev[at]) {
+        path.push_back(at);
+    }
+    reverse(path.begin(), path.end());
+    return path;
+}
+
+vector<string> HospitalNetwork::findLongestPath(const string& start, const string& end) {
+    if (!hospitalExists(start) || !hospitalExists(end)) {
+        return vector<string>();
+    }
+    
+    // Use DFS to find all possible paths
+    vector<string> currentPath;
+    vector<string> longestPath;
+    set<string> visited;
+    
+    function<void(const string&)> dfs = [&](const string& current) {
+        if (current == end) {
+            if (currentPath.size() > longestPath.size()) {
+                longestPath = currentPath;
+            }
+            return;
+        }
+        
+        visited.insert(current);
+        for (const auto& connection : hospitals[current].getConnections()) {
+            string neighbor = connection.first;
+            if (visited.find(neighbor) == visited.end()) {
+                currentPath.push_back(neighbor);
+                dfs(neighbor);
+                currentPath.pop_back();
+            }
+        }
+        visited.erase(current);
+    };
+    
+    currentPath.push_back(start);
+    dfs(start);
+    return longestPath;
+}
+
+void HospitalNetwork::displayShortestPath(const string& start, const string& end) {
+    vector<string> path = findShortestPath(start, end);
+    if (path.empty()) {
+        cout << "No path found between " << start << " and " << end << "\n";
+        return;
+    }
+    
+    cout << "Shortest path from " << start << " to " << end << ":\n";
+    double totalDistance = 0;
+    for (size_t i = 0; i < path.size() - 1; i++) {
+        cout << path[i] << " -> ";
+        totalDistance += distances[make_pair(path[i], path[i + 1])];
+    }
+    cout << path.back() << "\n";
+    cout << "Total distance: " << totalDistance << " units\n";
+}
+
+void HospitalNetwork::displayLongestPath(const string& start, const string& end) {
+    vector<string> path = findLongestPath(start, end);
+    if (path.empty()) {
+        cout << "No path found between " << start << " and " << end << "\n";
+        return;
+    }
+    
+    cout << "Longest path from " << start << " to " << end << ":\n";
+    double totalDistance = 0;
+    for (size_t i = 0; i < path.size() - 1; i++) {
+        cout << path[i] << " -> ";
+        totalDistance += distances[make_pair(path[i], path[i + 1])];
+    }
+    cout << path.back() << "\n";
+    cout << "Total distance: " << totalDistance << " units\n";
+}
+
+void HospitalNetwork::displayDistances() const {
+    cout << "\nHospital Distances:\n";
+    cout << string(60, '-') << "\n";
+    cout << "From\tTo\tDistance\n";
+    cout << string(60, '-') << "\n";
+    
+    for (const auto& dist : distances) {
+        cout << dist.first.first << "\t" 
+             << dist.first.second << "\t" 
+             << dist.second << "\n";
+    }
+}
+
+void HospitalNetwork::generateGraphImage() {
+    ofstream dotFile("hospital_network.dot");
+    dotFile << "digraph HospitalNetwork {\n";
+    dotFile << "    node [shape=box, style=filled, color=lightblue];\n";
+    
+    // Add nodes (hospitals)
+    for (const auto& hospital : hospitals) {
+        dotFile << "    \"" << hospital.first << "\" [label=\"" 
+                << hospital.first << "\\n" << hospital.second.getName() << "\"];\n";
+    }
+    
+    // Add edges (connections)
+    for (const auto& hospital : hospitals) {
+        for (const auto& connection : hospital.second.getConnections()) {
+            dotFile << "    \"" << hospital.first << "\" -> \"" 
+                    << connection.first << "\" [label=\"" 
+                    << distances[make_pair(hospital.first, connection.first)] 
+                    << "\"];\n";
+        }
+    }
+    
+    dotFile << "}\n";
+    dotFile.close();
+    
+    // Generate image using Graphviz
+    system("dot -Tpng hospital_network.dot -o hospital_network.png");
+}
+
+void HospitalNetwork::generateNetworkDiagram() {
+    generateGraphImage();
+    cout << "Network diagram generated as 'hospital_network.png'\n";
+}
+
+bool HospitalNetwork::deleteAllHospitals() {
+    if (hospitals.empty()) {
+        cout << "No hospitals to delete.\n";
+        return false;
+    }
+    
+    // Clear all hospitals and their connections
+    hospitals.clear();
+    distances.clear();
+    cout << "All hospitals and their connections have been deleted.\n";
+    return true;
+}
+
+bool HospitalNetwork::deleteAllConnections() {
+    if (hospitals.empty()) {
+        cout << "No hospitals exist to delete connections from.\n";
+        return false;
+    }
+    
+    // Remove all connections from each hospital
+    for (auto& pair : hospitals) {
+        pair.second.clearConnections();
+    }
+    
+    // Clear the distances map
+    distances.clear();
+    cout << "All connections have been deleted.\n";
+    return true;
 } 

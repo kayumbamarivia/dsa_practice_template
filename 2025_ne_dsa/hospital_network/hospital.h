@@ -47,6 +47,7 @@ public:
     // Connection management
     void addConnection(const string& hospitalId, const string& description);
     void removeConnection(const string& hospitalId);
+    void clearConnections();
     bool hasConnection(const string& hospitalId) const;
     string getConnectionDescription(const string& hospitalId) const;
     

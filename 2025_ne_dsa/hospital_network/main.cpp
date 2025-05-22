@@ -51,6 +51,12 @@ void displayMenu() {
    cout << "7. Display Connections\n";
    cout << "8. Setup Predefined Scenario\n";
    cout << "9. Export Relationships\n";
+   cout << "10. Display Distances\n";
+   cout << "11. Find Shortest Path\n";
+   cout << "12. Find Longest Path\n";
+   cout << "13. Generate Network Diagram\n";
+   cout << "14. Delete All Hospitals\n";
+   cout << "15. Delete All Connections\n";
    cout << "0. Exit\n";
    cout << "Enter your choice: ";
 }
@@ -108,6 +114,7 @@ void handleDeleteHospital(HospitalNetwork& network) {
 // Function to handle connection addition
 void handleAddConnection(HospitalNetwork& network) {
    string id1, id2, description;
+   double distance;
     
    cout << "\nEnter first Hospital ID: ";
    getline(cin, id1);
@@ -118,7 +125,10 @@ void handleAddConnection(HospitalNetwork& network) {
    cout << "Enter connection description: ";
    getline(cin, description);
     
-    network.addConnection(id1, id2, description);
+   cout << "Enter distance between hospitals: ";
+   distance = getIntInput();
+    
+    network.addConnection(id1, id2, description, distance);
 }
 
 // Function to handle connection removal
@@ -132,6 +142,62 @@ void handleRemoveConnection(HospitalNetwork& network) {
    getline(cin, id2);
     
     network.removeConnection(id1, id2);
+}
+
+// Function to handle shortest path finding
+void handleShortestPath(HospitalNetwork& network) {
+    string start, end;
+    
+    cout << "\nEnter starting Hospital ID: ";
+    getline(cin, start);
+    
+    cout << "Enter destination Hospital ID: ";
+    getline(cin, end);
+    
+    network.displayShortestPath(start, end);
+}
+
+// Function to handle longest path finding
+void handleLongestPath(HospitalNetwork& network) {
+    string start, end;
+    
+    cout << "\nEnter starting Hospital ID: ";
+    getline(cin, start);
+    
+    cout << "Enter destination Hospital ID: ";
+    getline(cin, end);
+    
+    network.displayLongestPath(start, end);
+}
+
+// Function to handle delete all hospitals
+void handleDeleteAllHospitals(HospitalNetwork& network) {
+    char confirm;
+    cout << "\nWARNING: This will delete ALL hospitals and their connections!\n";
+    cout << "Are you sure you want to proceed? (y/n): ";
+    cin >> confirm;
+    clearInputBuffer();
+    
+    if (confirm == 'y' || confirm == 'Y') {
+        network.deleteAllHospitals();
+    } else {
+        cout << "Operation cancelled.\n";
+    }
+}
+
+// Function to handle delete all connections
+void handleDeleteAllConnections(HospitalNetwork& network) {
+    char confirm;
+    cout << "\nWARNING: This will delete ALL connections between hospitals!\n";
+    cout << "Are you sure you want to proceed? (y/n): ";
+    cin >> confirm;
+    clearInputBuffer();
+    
+    if (confirm == 'y' || confirm == 'Y') {
+        network.deleteAllConnections();
+    } else {
+        cout << "Operation cancelled.\n";
+    }
 }
 
 int main() {
@@ -170,13 +236,31 @@ int main() {
                 break;
             case 9:
                 network.exportRelationships();
-               cout << "Relationships exported to relationships.csv\n";
+                cout << "Relationships exported to relationships.csv\n";
+                break;
+            case 10:
+                network.displayDistances();
+                break;
+            case 11:
+                handleShortestPath(network);
+                break;
+            case 12:
+                handleLongestPath(network);
+                break;
+            case 13:
+                network.generateNetworkDiagram();
+                break;
+            case 14:
+                handleDeleteAllHospitals(network);
+                break;
+            case 15:
+                handleDeleteAllConnections(network);
                 break;
             case 0:
-               cout << "Exiting program...\n";
+                cout << "Exiting program...\n";
                 break;
             default:
-               cout << "Invalid choice. Please try again.\n";
+                cout << "Invalid choice. Please try again.\n";
         }
     } while (choice != 0);
     
