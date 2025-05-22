@@ -13,48 +13,50 @@
 #include <vector>
 #include <map>
 
+using namespace std;
+
 class Hospital {
 private:
-    std::string id;          // Unique identifier (e.g., H1, H2)
-    std::string name;        // Hospital name
-    std::string location;    // Hospital location
+    string id;          // Unique identifier (e.g., H1, H2)
+    string name;        // Hospital name
+    string location;    // Hospital location
     int patientCount;        // Number of patients
     
     // Map to store connections with other hospitals
     // Key: Connected hospital ID, Value: Connection description
-    std::map<std::string, std::string> connections;
+    map<string, string> connections;
 
 public:
     // Constructors
     Hospital();
-    Hospital(const std::string& id, const std::string& name, 
-             const std::string& location, int patientCount);
+    Hospital(const string& id, const string& name, 
+             const string& location, int patientCount);
     
     // Getters
-    std::string getId() const;
-    std::string getName() const;
-    std::string getLocation() const;
+    string getId() const;
+    string getName() const;
+    string getLocation() const;
     int getPatientCount() const;
-    std::map<std::string, std::string> getConnections() const;
+    map<string, string> getConnections() const;
     
     // Setters
-    void setName(const std::string& name);
-    void setLocation(const std::string& location);
+    void setName(const string& name);
+    void setLocation(const string& location);
     void setPatientCount(int count);
     
     // Connection management
-    void addConnection(const std::string& hospitalId, const std::string& description);
-    void removeConnection(const std::string& hospitalId);
-    bool hasConnection(const std::string& hospitalId) const;
-    std::string getConnectionDescription(const std::string& hospitalId) const;
+    void addConnection(const string& hospitalId, const string& description);
+    void removeConnection(const string& hospitalId);
+    bool hasConnection(const string& hospitalId) const;
+    string getConnectionDescription(const string& hospitalId) const;
     
     // Data validation
-    static bool isValidId(const std::string& id);
+    static bool isValidId(const string& id);
     static bool isValidPatientCount(int count);
     
     // String representation
-    std::string toString() const;
-    std::string toCSV() const;
+    string toString() const;
+    string toCSV() const;
 };
 
 #endif // HOSPITAL_H 

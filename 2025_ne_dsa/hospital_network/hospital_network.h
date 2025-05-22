@@ -16,22 +16,23 @@
 #include <string>
 #include <fstream>
 
+using namespace std;
+
 class HospitalNetwork {
 private:
     // Map to store hospitals (key: hospital ID, value: Hospital object)
-    std::map<std::string, Hospital> hospitals;
+    map<string, Hospital> hospitals;
     
     // File paths
-    const std::string HOSPITALS_FILE = "hospitals.csv";
-    const std::string GRAPH_FILE = "graph.txt";
-    const std::string RELATIONSHIPS_FILE = "relationships.csv";
+    const string HOSPITALS_FILE = "hospitals.csv";
+    const string GRAPH_FILE = "graph.txt";
+    const string RELATIONSHIPS_FILE = "relationships.csv";
     
     // Helper methods
     bool loadHospitals();
     bool saveHospitals();
     bool loadConnections();
     bool saveConnections();
-    void exportRelationships();
     
 public:
     // Constructor and destructor
@@ -39,25 +40,25 @@ public:
     ~HospitalNetwork();
     
     // CRUD operations
-    bool addHospital(const std::string& id, const std::string& name, 
-                    const std::string& location, int patientCount);
-    bool updateHospital(const std::string& id, const std::string& name, 
-                       const std::string& location, int patientCount);
-    bool deleteHospital(const std::string& id);
-    Hospital* getHospital(const std::string& id);
+    bool addHospital(const string& id, const string& name, 
+                    const string& location, int patientCount);
+    bool updateHospital(const string& id, const string& name, 
+                       const string& location, int patientCount);
+    bool deleteHospital(const string& id);
+    Hospital* getHospital(const string& id);
     
     // Connection management
-    bool addConnection(const std::string& id1, const std::string& id2, 
-                      const std::string& description);
-    bool removeConnection(const std::string& id1, const std::string& id2);
+    bool addConnection(const string& id1, const string& id2, 
+                      const string& description);
+    bool removeConnection(const string& id1, const string& id2);
     
     // Display methods
     void displayAllHospitals() const;
     void displayConnections() const;
     
     // Validation methods
-    bool hospitalExists(const std::string& id) const;
-    bool connectionExists(const std::string& id1, const std::string& id2) const;
+    bool hospitalExists(const string& id) const;
+    bool connectionExists(const string& id1, const string& id2) const;
     
     // Predefined scenario setup
     void setupPredefinedScenario();
@@ -65,6 +66,7 @@ public:
     // File operations
     bool loadData();
     bool saveData();
+    void exportRelationships();
 };
 
 #endif // HOSPITAL_NETWORK_H 

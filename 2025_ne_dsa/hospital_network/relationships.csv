@@ -1,0 +1,13 @@
+Hospital Center,Connected Hospitals,Description
+H1,H2,Nearer
+H1,H4,Referral support
+H1,H6,Emergency backup
+H2,H1,Nearer
+H2,H3,Standard route
+H3,H2,Standard route
+H4,H1,Referral support
+H4,H5,Ambulance path
+H5,H4,Ambulance path
+H5,H6,Emergency support
+H6,H1,Emergency backup
+H6,H5,Emergency support

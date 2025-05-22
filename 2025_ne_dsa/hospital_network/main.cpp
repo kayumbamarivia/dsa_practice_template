@@ -1,18 +1,38 @@
+/**
+ * @file main.cpp
+ * @brief Main implementation file for the Hospital Network Management System
+ * 
+ * @details This file contains the main program logic and user interface for managing
+ * a network of hospitals and their relationships.
+ * 
+ * Required Libraries:
+ * - hospital_network.h: Custom header containing HospitalNetwork class definition
+ *   and core functionality for managing hospital relationships
+ * 
+ * - iostream: Standard C++ library for input/output operations
+ *   Provides console I/O functionality through cin and cout
+ * 
+ * - limits: Standard C++ library for numeric limits
+ *   Used for input validation and buffer management
+ */
+
 #include "hospital_network.h"
 #include <iostream>
 #include <limits>
 
+using namespace std;
+
 // Function to clear input buffer
 void clearInputBuffer() {
-    std::cin.clear();
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+   cin.clear();
+   cin.ignore(numeric_limits<streamsize>::max(), '\n');
 }
 
 // Function to get a valid integer input
 int getIntInput() {
     int value;
-    while (!(std::cin >> value)) {
-        std::cout << "Error: Please enter a valid number.\n";
+    while (!(cin >> value)) {
+       cout << "Error: Please enter a valid number.\n";
         clearInputBuffer();
     }
     clearInputBuffer();
@@ -21,35 +41,35 @@ int getIntInput() {
 
 // Function to display the main menu
 void displayMenu() {
-    std::cout << "\n=== Hospital Network Management System ===\n";
-    std::cout << "1. Add Hospital\n";
-    std::cout << "2. Update Hospital\n";
-    std::cout << "3. Delete Hospital\n";
-    std::cout << "4. Display All Hospitals\n";
-    std::cout << "5. Add Connection\n";
-    std::cout << "6. Remove Connection\n";
-    std::cout << "7. Display Connections\n";
-    std::cout << "8. Setup Predefined Scenario\n";
-    std::cout << "9. Export Relationships\n";
-    std::cout << "0. Exit\n";
-    std::cout << "Enter your choice: ";
+   cout << "\n=== Hospital Network Management System ===\n";
+   cout << "1. Add Hospital\n";
+   cout << "2. Update Hospital\n";
+   cout << "3. Delete Hospital\n";
+   cout << "4. Display All Hospitals\n";
+   cout << "5. Add Connection\n";
+   cout << "6. Remove Connection\n";
+   cout << "7. Display Connections\n";
+   cout << "8. Setup Predefined Scenario\n";
+   cout << "9. Export Relationships\n";
+   cout << "0. Exit\n";
+   cout << "Enter your choice: ";
 }
 
 // Function to handle hospital addition
 void handleAddHospital(HospitalNetwork& network) {
-    std::string id, name, location;
+   string id, name, location;
     int patientCount;
     
-    std::cout << "\nEnter Hospital ID (e.g., H1): ";
-    std::getline(std::cin, id);
+   cout << "\nEnter Hospital ID (e.g., H1): ";
+   getline(cin, id);
     
-    std::cout << "Enter Hospital Name: ";
-    std::getline(std::cin, name);
+   cout << "Enter Hospital Name: ";
+   getline(cin, name);
     
-    std::cout << "Enter Location: ";
-    std::getline(std::cin, location);
+   cout << "Enter Location: ";
+   getline(cin, location);
     
-    std::cout << "Enter Number of Patients: ";
+   cout << "Enter Number of Patients: ";
     patientCount = getIntInput();
     
     network.addHospital(id, name, location, patientCount);
@@ -57,19 +77,19 @@ void handleAddHospital(HospitalNetwork& network) {
 
 // Function to handle hospital update
 void handleUpdateHospital(HospitalNetwork& network) {
-    std::string id, name, location;
+   string id, name, location;
     int patientCount;
     
-    std::cout << "\nEnter Hospital ID to update: ";
-    std::getline(std::cin, id);
+   cout << "\nEnter Hospital ID to update: ";
+   getline(cin, id);
     
-    std::cout << "Enter new Hospital Name: ";
-    std::getline(std::cin, name);
+   cout << "Enter new Hospital Name: ";
+   getline(cin, name);
     
-    std::cout << "Enter new Location: ";
-    std::getline(std::cin, location);
+   cout << "Enter new Location: ";
+   getline(cin, location);
     
-    std::cout << "Enter new Number of Patients: ";
+   cout << "Enter new Number of Patients: ";
     patientCount = getIntInput();
     
     network.updateHospital(id, name, location, patientCount);
@@ -77,39 +97,39 @@ void handleUpdateHospital(HospitalNetwork& network) {
 
 // Function to handle hospital deletion
 void handleDeleteHospital(HospitalNetwork& network) {
-    std::string id;
+   string id;
     
-    std::cout << "\nEnter Hospital ID to delete: ";
-    std::getline(std::cin, id);
+   cout << "\nEnter Hospital ID to delete: ";
+   getline(cin, id);
     
     network.deleteHospital(id);
 }
 
 // Function to handle connection addition
 void handleAddConnection(HospitalNetwork& network) {
-    std::string id1, id2, description;
+   string id1, id2, description;
     
-    std::cout << "\nEnter first Hospital ID: ";
-    std::getline(std::cin, id1);
+   cout << "\nEnter first Hospital ID: ";
+   getline(cin, id1);
     
-    std::cout << "Enter second Hospital ID: ";
-    std::getline(std::cin, id2);
+   cout << "Enter second Hospital ID: ";
+   getline(cin, id2);
     
-    std::cout << "Enter connection description: ";
-    std::getline(std::cin, description);
+   cout << "Enter connection description: ";
+   getline(cin, description);
     
     network.addConnection(id1, id2, description);
 }
 
 // Function to handle connection removal
 void handleRemoveConnection(HospitalNetwork& network) {
-    std::string id1, id2;
+   string id1, id2;
     
-    std::cout << "\nEnter first Hospital ID: ";
-    std::getline(std::cin, id1);
+   cout << "\nEnter first Hospital ID: ";
+   getline(cin, id1);
     
-    std::cout << "Enter second Hospital ID: ";
-    std::getline(std::cin, id2);
+   cout << "Enter second Hospital ID: ";
+   getline(cin, id2);
     
     network.removeConnection(id1, id2);
 }
@@ -150,13 +170,13 @@ int main() {
                 break;
             case 9:
                 network.exportRelationships();
-                std::cout << "Relationships exported to relationships.csv\n";
+               cout << "Relationships exported to relationships.csv\n";
                 break;
             case 0:
-                std::cout << "Exiting program...\n";
+               cout << "Exiting program...\n";
                 break;
             default:
-                std::cout << "Invalid choice. Please try again.\n";
+               cout << "Invalid choice. Please try again.\n";
         }
     } while (choice != 0);
     
